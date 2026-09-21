@@ -1,0 +1,91 @@
+## .NET / Visual Studio / Rider / VS Code
+bin/
+obj/
+out/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.DotSettings.user
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+## Test / coverage
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverlet/
+
+## Rider / ReSharper cache
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Secrets & environment-specific config
+appsettings.Development.json
+appsettings.*.local.json
+appsettings.Local.json
+*.env
+.env
+.env.*
+!.env.example
+secrets.json
+**/Properties/launchSettings.json
+
+## EF Core
+*.edmx.diagram
+Migrations/*.Designer.cs.bak
+
+## Docker
+Dockerfile.override
+docker-compose.override.yml
+.docker/
+*.pid
+
+## Database container data (if you bind-mount volumes locally)
+data/
+db-data/
+pgdata/
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.db
+
+## OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Misc
+*.log
+*.tmp
+*.bak
+*.swp
