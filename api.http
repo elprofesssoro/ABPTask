@@ -210,7 +210,7 @@ Content-Type: {{contentType}}
 }
 
 ### Evening band (18:00–23:00) — expect ×0.80
-POST {{baseUrl}}/api/halls/1/bookings
+POST {{baseUrl}}/api/halls/2/bookings
 Content-Type: {{contentType}}
 
 {
@@ -263,3 +263,10 @@ DELETE {{baseUrl}}/api/halls/1
 ### Delete Hall — not found (expect 404)
 ### ==========================================
 DELETE {{baseUrl}}/api/halls/9999
+
+
+### ==========================================
+### Report — Halls Booking and Revenue Summary
+### ==========================================
+GET {{baseUrl}}/api/reports/halls-summary?fromDate=2026-01-01T00:00:00Z&toDate=2026-12-31T23:59:59Z
+Accept: {{contentType}}

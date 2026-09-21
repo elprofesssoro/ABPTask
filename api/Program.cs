@@ -14,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.Configure<PriceRules>(builder.Configuration.GetSection("PricingRules"));
 builder.Services.AddScoped<IHallService, HallService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 WebApplication app = builder.Build();
 app.MapControllers();
