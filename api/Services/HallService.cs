@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
 
-public class HallService(AppDbContext _context) : IHallService
+public class HallService(AppDbContext _context, IDiscountService _discountService) : IHallService
 {
     public async Task<ErrorOr<Hall>> AddHallAsync(AddHallDTO hallDto)
     {
@@ -92,14 +92,17 @@ public class HallService(AppDbContext _context) : IHallService
 
     public async Task<ErrorOr<SearchHallResponse>> SearchAvailableHallsAsync(SearchHallDTO searchDto)
     {
-        if (searchDto.StartTime >= searchDto.EndTime)
+        DateTime startTime = searchDto.StartTime.UtcDateTime;
+        DateTime endTime = searchDto.EndTime.UtcDateTime;
+
+        if (startTime >= endTime)
         {
             return Error.Validation(
                 "Search.InvalidTimeRange",
                 "The start time must precede the end time.");
         }
 
-        if (searchDto.StartTime < DateTime.UtcNow)
+        if (startTime < DateTime.UtcNow)
         {
             return Error.Validation(
                 "Search.PastTime",
@@ -118,8 +121,8 @@ public class HallService(AppDbContext _context) : IHallService
             .Where(h => h.Capacity >= searchDto.Capacity)
             .Where(h => !_context.Bookings.Any(b =>
                 b.HallId == h.Id &&
-                b.StartTime < searchDto.EndTime &&
-                b.EndTime > searchDto.StartTime))
+                b.StartTime < endTime &&
+                b.EndTime > startTime))
             .Select(h => new HallDto(
                 h.Id,
                 h.Name,
@@ -134,16 +137,17 @@ public class HallService(AppDbContext _context) : IHallService
 
     public async Task<ErrorOr<BookingResponse>> BookHallAsync(int hallId, BookingDTO bookingDTO)
     {
+        DateTime startTime = bookingDTO.date.UtcDateTime;
+        DateTime endTime = startTime.AddMinutes(bookingDTO.durationMinutes);
+
         //Validate booking details
         if (bookingDTO.durationMinutes <= 0)
             return Error.Validation("Booking.InvalidDuration", "Duration must be greater than zero minutes.");
 
-        if (bookingDTO.date < DateTime.UtcNow)
+        if (startTime < DateTime.UtcNow)
             return Error.Validation("Booking.PastDate", "Cannot book a hall for a past date or time.");
 
         // Calculate the start and end times for the booking
-        DateTime startTime = bookingDTO.date;
-        DateTime endTime = startTime.AddMinutes(bookingDTO.durationMinutes);
         Hall? hall = await _context.Halls.FirstOrDefaultAsync(h => h.Id == hallId);
 
         if (hall is null)
@@ -199,10 +203,7 @@ public class HallService(AppDbContext _context) : IHallService
 
         decimal durationHours = (decimal)bookingDTO.durationMinutes / 60m;
         decimal hallBaseCost = Math.Round(hall.CostPerHour * durationHours, 2);
-
-        // TODO: Apply discount
-        decimal hallFinalCost = hallBaseCost;
-
+        decimal hallFinalCost = _discountService.CalculateDiscountPrice(hall.CostPerHour, startTime, endTime);
         decimal totalCost = hallFinalCost + totalAmenitiesCost;
 
         Booking booking = new Booking

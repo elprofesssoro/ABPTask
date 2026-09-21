@@ -1,7 +1,7 @@
 namespace api.DTO;
 
 public record BookingDTO(
-    DateTime date,
+    DateTimeOffset date,
     int durationMinutes,
     List<int> AmenityIds
 );

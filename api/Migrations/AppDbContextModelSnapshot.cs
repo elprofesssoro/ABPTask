@@ -26,126 +26,158 @@ namespace api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Cost")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("cost");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_amenities");
 
-                    b.ToTable("Amenities");
+                    b.ToTable("amenities", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AmenitiesCost")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("amenities_cost");
 
                     b.Property<DateTime>("BookingDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("booking_date");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_time");
 
                     b.Property<decimal>("HallBaseCost")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("hall_base_cost");
 
                     b.Property<decimal>("HallDiscountedCost")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("hall_discounted_cost");
 
                     b.Property<int>("HallId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("hall_id");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_time");
 
                     b.Property<decimal>("TotalCost")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_cost");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_bookings");
 
-                    b.HasIndex("HallId");
+                    b.HasIndex("HallId")
+                        .HasDatabaseName("ix_bookings_hall_id");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("bookings", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.BookingAmenity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AmenityId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("amenity_id");
 
                     b.Property<int>("BookingId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("booking_id");
 
                     b.Property<decimal>("PriceAtBooking")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("price_at_booking");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_booking_amenities");
 
-                    b.HasIndex("AmenityId");
+                    b.HasIndex("AmenityId")
+                        .HasDatabaseName("ix_booking_amenities_amenity_id");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("BookingId")
+                        .HasDatabaseName("ix_booking_amenities_booking_id");
 
-                    b.ToTable("BookingAmenity");
+                    b.ToTable("booking_amenities", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.Hall", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("capacity");
 
                     b.Property<decimal>("CostPerHour")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("cost_per_hour");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_halls");
 
-                    b.ToTable("Halls");
+                    b.ToTable("halls", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.HallAmenity", b =>
                 {
                     b.Property<int>("HallId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("hall_id");
 
                     b.Property<int>("AmenityId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("amenity_id");
 
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
-                    b.HasKey("HallId", "AmenityId");
+                    b.HasKey("HallId", "AmenityId")
+                        .HasName("pk_hall_amenities");
 
-                    b.HasIndex("AmenityId");
+                    b.HasIndex("AmenityId")
+                        .HasDatabaseName("ix_hall_amenities_amenity_id");
 
-                    b.ToTable("HallAmenities");
+                    b.ToTable("hall_amenities", (string)null);
                 });
 
             modelBuilder.Entity("api.Models.Booking", b =>
@@ -154,7 +186,8 @@ namespace api.Migrations
                         .WithMany()
                         .HasForeignKey("HallId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bookings_halls_hall_id");
 
                     b.Navigation("Hall");
                 });
@@ -165,13 +198,15 @@ namespace api.Migrations
                         .WithMany()
                         .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_booking_amenities_amenities_amenity_id");
 
                     b.HasOne("api.Models.Booking", "Booking")
                         .WithMany("BookedAmenities")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_booking_amenities_bookings_booking_id");
 
                     b.Navigation("Amenity");
 
@@ -184,13 +219,15 @@ namespace api.Migrations
                         .WithMany("HallAmenities")
                         .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_hall_amenities_amenities_amenity_id");
 
                     b.HasOne("api.Models.Hall", "Hall")
                         .WithMany("HallAmenities")
                         .HasForeignKey("HallId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_hall_amenities_halls_hall_id");
 
                     b.Navigation("Amenity");
 

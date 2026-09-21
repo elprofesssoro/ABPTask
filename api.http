@@ -148,7 +148,7 @@ Content-Type: {{contentType}}
 }
 
 ### ==========================================
-### Book Hall — amenity not attached to this hall (expect 400)
+### Book Hall — invalid amenity (expect 400)
 ### ==========================================
 POST {{baseUrl}}/api/hall/books/1
 Content-Type: {{contentType}}
@@ -168,6 +168,85 @@ Content-Type: {{contentType}}
 {
   "date": "2026-10-05T14:00:00Z",
   "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### ==========================================
+### PRICING TESTS — verify discount/charge frames
+### ==========================================
+
+### Morning band (06:00–09:00) — expect ×0.90
+### e.g. costPerHour=2000, 1 hour → base 2000, discounted 1800
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T06:00:00",
+  "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### Standard hours, no band match (09:00–18:00 outside 12–14) — expect ×1.0, no discount
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T10:00:00",
+  "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### Peak band (12:00–14:00) — expect ×1.15 surcharge
+### e.g. costPerHour=2000, 1 hour → base 2000, surcharged 2300
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T12:00:00",
+  "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### Evening band (18:00–23:00) — expect ×0.80
+### e.g. costPerHour=2000, 2 hours → base 4000, discounted 3200
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T19:00:00",
+  "durationMinutes": 120,
+  "amenityIds": []
+}
+
+### Spans across a band boundary (17:00–20:00, crosses 18:00) — expect ×1.0, no discount
+### since it doesn't fit fully inside any single band
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T17:00:00",
+  "durationMinutes": 180,
+  "amenityIds": []
+}
+
+### Exceeds a band on the other side (13:00–15:00, starts in peak but ends after it) — expect ×1.0
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T13:00:00",
+  "durationMinutes": 120,
+  "amenityIds": []
+}
+
+### Morning band boundary — starts exactly at band edge (06:00), ends exactly at other edge (09:00)
+### expect ×0.90 since start >= 06:00 and end <= 09:00 both hold
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-08T06:00:00",
+  "durationMinutes": 180,
   "amenityIds": []
 }
 

@@ -1,7 +1,7 @@
 namespace api.DTO;
 
 public record SearchHallDTO(
-    DateTime StartTime,
-    DateTime EndTime,
+    DateTimeOffset StartTime,
+    DateTimeOffset EndTime,
     int Capacity
 );

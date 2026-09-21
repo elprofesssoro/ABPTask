@@ -1,4 +1,5 @@
 using api.Data;
+using api.Options;
 using api.Models;
 using api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
 
 builder.Services.AddControllers();
+builder.Services.Configure<PriceRules>(builder.Configuration.GetSection("PricingRules"));
 builder.Services.AddScoped<IHallService, HallService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
 
 WebApplication app = builder.Build();
 app.MapControllers();
