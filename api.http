@@ -1,0 +1,188 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### ==========================================
+### Add Hall — happy path
+### ==========================================
+POST {{baseUrl}}/api/hall/add
+Content-Type: {{contentType}}
+
+{
+  "name": "Зал D",
+  "capacity": 40,
+  "costPerHour": 1800,
+  "amenityIds": [1, 2]
+}
+
+### ==========================================
+### Add Hall — invalid amenity id (expect 400)
+### ==========================================
+POST {{baseUrl}}/api/hall/add
+Content-Type: {{contentType}}
+
+{
+  "name": "Зал E",
+  "capacity": 20,
+  "costPerHour": 1000,
+  "amenityIds": [999]
+}
+
+### ==========================================
+### Add Hall — duplicate name (expect 409)
+### ==========================================
+POST {{baseUrl}}/api/hall/add
+Content-Type: {{contentType}}
+
+{
+  "name": "Зал А",
+  "capacity": 50,
+  "costPerHour": 2000,
+  "amenityIds": []
+}
+
+### ==========================================
+### Update Hall — happy path
+### (replace 1 with an actual hall id from your DB)
+### ==========================================
+PUT {{baseUrl}}/api/hall/1
+Content-Type: {{contentType}}
+
+{
+  "name": "Зал А (оновлений)",
+  "capacity": 55,
+  "cost": 2100,
+  "amenityIds": [1, 3]
+}
+
+### ==========================================
+### Update Hall — partial update (only capacity)
+### ==========================================
+PUT {{baseUrl}}/api/hall/1
+Content-Type: {{contentType}}
+
+{
+  "capacity": 60
+}
+
+### ==========================================
+### Update Hall — not found (expect 404)
+### ==========================================
+PUT {{baseUrl}}/api/hall/9999
+Content-Type: {{contentType}}
+
+{
+  "name": "Неіснуючий зал"
+}
+
+### ==========================================
+### Search Available Halls — happy path
+### ==========================================
+POST {{baseUrl}}/api/hall/search
+Content-Type: {{contentType}}
+
+{
+  "startTime": "2026-10-01T10:00:00Z",
+  "endTime": "2026-10-01T12:00:00Z",
+  "capacity": 30
+}
+
+### ==========================================
+### Search Available Halls — invalid time range (expect 400)
+### ==========================================
+POST {{baseUrl}}/api/hall/search
+Content-Type: {{contentType}}
+
+{
+  "startTime": "2026-10-01T12:00:00Z",
+  "endTime": "2026-10-01T10:00:00Z",
+  "capacity": 30
+}
+
+### ==========================================
+### Search Available Halls — past time (expect 400)
+### ==========================================
+POST {{baseUrl}}/api/hall/search
+Content-Type: {{contentType}}
+
+{
+  "startTime": "2020-01-01T10:00:00Z",
+  "endTime": "2020-01-01T12:00:00Z",
+  "capacity": 30
+}
+
+### ==========================================
+### Book Hall — happy path
+### ==========================================
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-05T14:00:00Z",
+  "durationMinutes": 120,
+  "amenityIds": [1, 3]
+}
+
+### ==========================================
+### Book Hall — no amenities
+### ==========================================
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-06T09:00:00Z",
+  "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### ==========================================
+### Book Hall — conflicting time slot (expect 409)
+### run the happy-path booking above first, then this with overlapping time
+### ==========================================
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-05T14:30:00Z",
+  "durationMinutes": 30,
+  "amenityIds": []
+}
+
+### ==========================================
+### Book Hall — amenity not attached to this hall (expect 400)
+### ==========================================
+POST {{baseUrl}}/api/hall/books/1
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-07T10:00:00Z",
+  "durationMinutes": 60,
+  "amenityIds": [999]
+}
+
+### ==========================================
+### Book Hall — hall not found (expect 404)
+### ==========================================
+POST {{baseUrl}}/api/hall/books/9999
+Content-Type: {{contentType}}
+
+{
+  "date": "2026-10-05T14:00:00Z",
+  "durationMinutes": 60,
+  "amenityIds": []
+}
+
+### ==========================================
+### Delete Hall — happy path
+### (replace 2 with a hall id that has no active bookings)
+### ==========================================
+DELETE {{baseUrl}}/api/hall/2
+
+### ==========================================
+### Delete Hall — has active bookings (expect 409)
+### ==========================================
+DELETE {{baseUrl}}/api/hall/1
+
+### ==========================================
+### Delete Hall — not found (expect 404)
+### ==========================================
+DELETE {{baseUrl}}/api/hall/9999
