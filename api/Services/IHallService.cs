@@ -8,6 +8,7 @@ namespace api.Services;
 public interface IHallService
 {
     Task<ErrorOr<Hall>> AddHallAsync(AddHallDTO hallDto);
+    Task<ErrorOr<Hall>> GetHallByIdAsync(int hallId);
     Task<ErrorOr<Success>> UpdateHallAsync(int hallId, UpdateHallDto hallDto);
     Task<ErrorOr<SearchHallResponse>> SearchAvailableHallsAsync(SearchHallDTO searchDto);
     Task<ErrorOr<BookingResponse>> BookHallAsync(int hallId, BookingDTO bookingDTO);

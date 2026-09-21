@@ -2,9 +2,9 @@
 @contentType = application/json
 
 ### ==========================================
-### Add Hall — happy path
+### Add Hall — happy path (expect 201 Created)
 ### ==========================================
-POST {{baseUrl}}/api/hall/add
+POST {{baseUrl}}/api/halls
 Content-Type: {{contentType}}
 
 {
@@ -17,7 +17,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Add Hall — invalid amenity id (expect 400)
 ### ==========================================
-POST {{baseUrl}}/api/hall/add
+POST {{baseUrl}}/api/halls
 Content-Type: {{contentType}}
 
 {
@@ -30,7 +30,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Add Hall — duplicate name (expect 409)
 ### ==========================================
-POST {{baseUrl}}/api/hall/add
+POST {{baseUrl}}/api/halls
 Content-Type: {{contentType}}
 
 {
@@ -41,10 +41,15 @@ Content-Type: {{contentType}}
 }
 
 ### ==========================================
-### Update Hall — happy path
-### (replace 1 with an actual hall id from your DB)
+### Get Hall by ID — happy path (expect 200)
 ### ==========================================
-PUT {{baseUrl}}/api/hall/1
+GET {{baseUrl}}/api/halls/1
+Accept: {{contentType}}
+
+### ==========================================
+### Update Hall — happy path (expect 204 or 200)
+### ==========================================
+PUT {{baseUrl}}/api/halls/1
 Content-Type: {{contentType}}
 
 {
@@ -57,7 +62,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Update Hall — partial update (only capacity)
 ### ==========================================
-PUT {{baseUrl}}/api/hall/1
+PUT {{baseUrl}}/api/halls/1
 Content-Type: {{contentType}}
 
 {
@@ -67,7 +72,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Update Hall — not found (expect 404)
 ### ==========================================
-PUT {{baseUrl}}/api/hall/9999
+PUT {{baseUrl}}/api/halls/9999
 Content-Type: {{contentType}}
 
 {
@@ -77,7 +82,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Search Available Halls — happy path
 ### ==========================================
-POST {{baseUrl}}/api/hall/search
+POST {{baseUrl}}/api/halls/search
 Content-Type: {{contentType}}
 
 {
@@ -89,7 +94,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Search Available Halls — invalid time range (expect 400)
 ### ==========================================
-POST {{baseUrl}}/api/hall/search
+POST {{baseUrl}}/api/halls/search
 Content-Type: {{contentType}}
 
 {
@@ -101,7 +106,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Search Available Halls — past time (expect 400)
 ### ==========================================
-POST {{baseUrl}}/api/hall/search
+POST {{baseUrl}}/api/halls/search
 Content-Type: {{contentType}}
 
 {
@@ -111,9 +116,9 @@ Content-Type: {{contentType}}
 }
 
 ### ==========================================
-### Book Hall — happy path
+### Book Hall — happy path (expect 201 Created)
 ### ==========================================
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
@@ -125,7 +130,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Book Hall — no amenities
 ### ==========================================
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
@@ -136,9 +141,8 @@ Content-Type: {{contentType}}
 
 ### ==========================================
 ### Book Hall — conflicting time slot (expect 409)
-### run the happy-path booking above first, then this with overlapping time
 ### ==========================================
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
@@ -150,7 +154,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Book Hall — invalid amenity (expect 400)
 ### ==========================================
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
@@ -162,7 +166,7 @@ Content-Type: {{contentType}}
 ### ==========================================
 ### Book Hall — hall not found (expect 404)
 ### ==========================================
-POST {{baseUrl}}/api/hall/books/9999
+POST {{baseUrl}}/api/halls/9999/bookings
 Content-Type: {{contentType}}
 
 {
@@ -176,92 +180,86 @@ Content-Type: {{contentType}}
 ### ==========================================
 
 ### Morning band (06:00–09:00) — expect ×0.90
-### e.g. costPerHour=2000, 1 hour → base 2000, discounted 1800
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T06:00:00",
+  "date": "2026-10-08T06:00:00Z",
   "durationMinutes": 60,
   "amenityIds": []
 }
 
-### Standard hours, no band match (09:00–18:00 outside 12–14) — expect ×1.0, no discount
-POST {{baseUrl}}/api/hall/books/1
+### Standard hours, no band match (09:00–18:00 outside 12–14) — expect ×1.0
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T10:00:00",
+  "date": "2026-10-08T10:00:00Z",
   "durationMinutes": 60,
   "amenityIds": []
 }
 
 ### Peak band (12:00–14:00) — expect ×1.15 surcharge
-### e.g. costPerHour=2000, 1 hour → base 2000, surcharged 2300
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T12:00:00",
+  "date": "2026-10-08T12:00:00Z",
   "durationMinutes": 60,
   "amenityIds": []
 }
 
 ### Evening band (18:00–23:00) — expect ×0.80
-### e.g. costPerHour=2000, 2 hours → base 4000, discounted 3200
-POST {{baseUrl}}/api/hall/books/1
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T19:00:00",
+  "date": "2026-10-08T19:00:00Z",
   "durationMinutes": 120,
   "amenityIds": []
 }
 
-### Spans across a band boundary (17:00–20:00, crosses 18:00) — expect ×1.0, no discount
-### since it doesn't fit fully inside any single band
-POST {{baseUrl}}/api/hall/books/1
+### Spans across a band boundary (17:00–20:00, crosses 18:00) — expect ×1.0
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T17:00:00",
+  "date": "2026-10-08T17:00:00Z",
   "durationMinutes": 180,
   "amenityIds": []
 }
 
-### Exceeds a band on the other side (13:00–15:00, starts in peak but ends after it) — expect ×1.0
-POST {{baseUrl}}/api/hall/books/1
+### Exceeds a band on the other side (13:00–15:00) — expect ×1.0
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T13:00:00",
+  "date": "2026-10-08T13:00:00Z",
   "durationMinutes": 120,
   "amenityIds": []
 }
 
-### Morning band boundary — starts exactly at band edge (06:00), ends exactly at other edge (09:00)
-### expect ×0.90 since start >= 06:00 and end <= 09:00 both hold
-POST {{baseUrl}}/api/hall/books/1
+### Morning band boundary (06:00–09:00 exactly) — expect ×0.90
+POST {{baseUrl}}/api/halls/1/bookings
 Content-Type: {{contentType}}
 
 {
-  "date": "2026-10-08T06:00:00",
+  "date": "2026-10-08T06:00:00Z",
   "durationMinutes": 180,
   "amenityIds": []
 }
 
 ### ==========================================
-### Delete Hall — happy path
-### (replace 2 with a hall id that has no active bookings)
+### Delete Hall — happy path (expect 204)
 ### ==========================================
-DELETE {{baseUrl}}/api/hall/2
+DELETE {{baseUrl}}/api/halls/2
 
 ### ==========================================
 ### Delete Hall — has active bookings (expect 409)
 ### ==========================================
-DELETE {{baseUrl}}/api/hall/1
+DELETE {{baseUrl}}/api/halls/1
 
 ### ==========================================
 ### Delete Hall — not found (expect 404)
 ### ==========================================
-DELETE {{baseUrl}}/api/hall/9999
+DELETE {{baseUrl}}/api/halls/9999

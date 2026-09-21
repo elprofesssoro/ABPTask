@@ -42,6 +42,19 @@ public class HallService(AppDbContext _context, IDiscountService _discountServic
         return hall;
     }
 
+    public async Task<ErrorOr<Hall>> GetHallByIdAsync(int hallId)
+    {
+        Hall? hall = await _context.Halls
+            .Include(h => h.HallAmenities)
+            .ThenInclude(ha => ha.Amenity)
+            .FirstOrDefaultAsync(h => h.Id == hallId);
+
+        if (hall is null)
+            return Error.NotFound("Hall.NotFound", $"A hall with ID '{hallId}' was not found.");
+
+        return hall;
+    }
+
     public async Task<ErrorOr<Success>> UpdateHallAsync(int hallId, UpdateHallDto hallDto)
     {
         Hall? hall = await _context.Halls
