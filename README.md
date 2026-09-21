@@ -181,35 +181,35 @@
   * `fromDate` — початок періоду (ISO 8601, напр. `2026-10-01T00:00:00Z`). За замовчуванням — перше число поточного місяця.
   * `toDate` — кінець періоду (ISO 8601). За замовчуванням — поточний момент.
 * **Приклад запиту:**
-```
-GET /api/halls/summary?fromDate=2026-10-01T00:00:00Z&toDate=2026-10-31T23:59:59Z
-```
+    ```
+    GET /api/halls/summary?fromDate=2026-10-01T00:00:00Z&toDate=2026-10-31T23:59:59Z
+    ```
 * **Відповіді:**
   * `200 OK` — Звіт сформовано:
-```json
-    {
-      "fromDate": "2026-10-01T00:00:00Z",
-      "toDate": "2026-10-31T23:59:59Z",
-      "totalBookings": 12,
-      "totalRevenue": 34200.00,
-      "halls": [
+    ```json
         {
-          "hallId": 1,
-          "hallName": "Зал А",
-          "bookingsCount": 7,
-          "totalRevenue": 21000.00,
-          "averageBookingValue": 3000.00
-        },
-        {
-          "hallId": 3,
-          "hallName": "Зал C",
-          "bookingsCount": 0,
-          "totalRevenue": 0.00,
-          "averageBookingValue": 0.00
+          "fromDate": "2026-10-01T00:00:00Z",
+          "toDate": "2026-10-31T23:59:59Z",
+          "totalBookings": 12,
+          "totalRevenue": 34200.00,
+          "halls": [
+            {
+              "hallId": 1,
+              "hallName": "Зал А",
+              "bookingsCount": 7,
+              "totalRevenue": 21000.00,
+              "averageBookingValue": 3000.00
+            },
+            {
+              "hallId": 3,
+              "hallName": "Зал C",
+              "bookingsCount": 0,
+              "totalRevenue": 0.00,
+              "averageBookingValue": 0.00
+            }
+          ]
         }
-      ]
-    }
-```
+    ```
   * `400 Bad Request` — `fromDate` пізніше за `toDate`.
 
 ---
